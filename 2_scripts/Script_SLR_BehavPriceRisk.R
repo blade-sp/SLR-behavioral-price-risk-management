@@ -617,26 +617,40 @@ summary_behav_data <- behav_data %>%
     Positive = sum(Direction == 1),
     Negative = sum(Direction == -1),
     No_direction = sum(Direction == 0),
-    Total = sum(Positive, Negative, No_direction))
+    Total = Positive + Negative + No_direction)
 
 behav_pref_absolute <- ggplot(data = behav_data) +
-  geom_col(aes(x = Preference, y = Direction, fill = Direction >0), width = 0.5) +
+  geom_col(aes(x = Preference, y = Direction, fill = Direction > 0), width = 0.5) +
   scale_x_discrete(limits = c("Price expectations", "Reference dependence", "Loss aversion",
                               "Probability weighting", "Variation aversion", "Uncertainty aversion",
-                              "Time preference", "Risk preferences")) +
+                              "Time preference", "Risk preferences"), 
+                  expand = expansion(mult = c(0.15,0.15))) +
   scale_fill_manual(values = c("#79AAD9", "#5788C4"), guide = "none") +
   geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "solid") +
   geom_label(data = summary_behav_data, 
-             aes(x = Preference, y = 0, label = No_direction), color = "gray30", size = 3) +
+             aes(x = Preference, y = 0, label = Positive + Negative), color = "black", size = 3) +
+  geom_label(aes(x = 8.7, y = 0, label = "Significant"), color = "black", size = 3) +
+  geom_text(data = summary_behav_data, 
+            aes(x = Preference, y = -12.5,
+                label = Total), hjust = 0, size = 3, color = "black") + 
+  geom_text(data = summary_behav_data, 
+            aes(x = Preference, y = -10.3,
+                label = paste0("(", No_direction, ")")), 
+            hjust = 0, size = 3, color = "black") + 
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)), 
+                     breaks = seq(-5, 30, by = 5)) +
   coord_flip() +
-  labs(x = "", y = "Number of observations") +
+  labs(x = "", y = "\nNumber of observations") +
   theme_minimal() +
-  expand_limits(x = -0.2) +
+  expand_limits(y = c(NA, max(abs(behav_data$Direction)) + 2)) + 
   annotate("text", x = 0.2, y = -2.5, label = "Negative \neffect", color = "black", size = 3) + 
   annotate("text", x = 0.2, y = 2.5, label = "Positive \neffect", color = "black", size = 3) +
-  theme(legend.position = c(0.8, 0.4),
-        legend.box.background = element_rect(fill = "lightgrey"),
-        axis.text.y = element_text(size = 10))
+  annotate("text", x = 8.7, y = -13, label = "Total", hjust = 0, size = 3, color = "black") +
+  annotate("text", x = 8.7, y = -11.2, label = "(No effect)", hjust = 0, size = 3, color = "black") +
+  theme(axis.text.y = element_text(size = 10),
+        panel.grid.major.y = element_blank(),  
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_blank())  
 
 behav_pref_absolute
 
@@ -835,22 +849,16 @@ psych_factor_share
 summary_psych_data <- psych_data %>%
   group_by(Factor) %>%
   summarise(
-    Positive = sum(Direction == "+"),
-    Negative = sum(Direction == "-"),
-    Insignificant = sum(Direction == "0"),
-    Total = sum(Positive, Negative, Insignificant))
+    Positive = sum(Direction == 1),
+    Negative = sum(Direction == -1),
+    Insignificant = sum(Direction == 0),
+    Total = Positive + Negative + Insignificant)
 
 # operationalization fill
 psych_factor_absolute <- ggplot(data = psych_data) +
   geom_col(aes(x = Factor, y = Direction, fill = interaction(Operationalization, Direction)), width = 0.5) +
   geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "solid") +
-  geom_label(data = summary_psych_data, 
-             aes(x = Factor, y = 0, label = Insignificant), color = "gray30", size = 3) +
-  scale_x_discrete(limits = c("Price and yield expectations", "Risk perceptions", "Perceived usefulness", "Alternative tools perceptions", "Tools knowledge", 
-                              "Subjective norms", "Network influence",
-                              "Management attitudes", "Innovativeness", "Risk attitudes")) +
-  coord_flip() +
-  labs(x = "", y = "Number of statistically significant observations") +
+  labs(x = "", y = "\nNumber of statistically significant observations") +
   theme_minimal() +
   scale_fill_manual(
     values = c("Self reported intention.1" = "#D79E42", "Self reported intention.-1" = "#E7B769",   
@@ -863,19 +871,37 @@ psych_factor_absolute <- ggplot(data = psych_data) +
     labels = c("Self reported intention to adopt",
                "Self reported adoption",    
                "Actual adoption")) +
-  scale_y_continuous(breaks = seq(-4, 20, by = 2)) +
-  expand_limits(x = -0.5, y = -4) +
-  annotate("text", x = 0, y = -2.5, label = "Negative \neffect", color = "black", size = 3) + 
-  annotate("text", x = 0, y = 2.5, label = "Positive \neffect", color = "black", size = 3) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)), breaks = seq(-4, 20, by = 2)) +
+  scale_x_discrete(limits = c("Price and yield expectations", "Risk perceptions", "Perceived usefulness",
+                              "Alternative tools perceptions", "Tools knowledge", 
+                              "Subjective norms", "Network influence", 
+                              "Management attitudes", "Innovativeness", "Risk attitudes"),
+                              expand = expansion(mult = c(0.15, 0.15))) +
+  coord_flip() +
+  geom_label(data = summary_psych_data, 
+            aes(x = Factor, y = 0, label = Positive + Negative), color = "black", size = 3) +
+  geom_label(aes(x = 10.8, y = 0, label = "Significant"), color = "black", size = 3) +
+  geom_text(data = summary_psych_data, 
+            aes(x = Factor, y = -8.1,
+                label = Total), hjust = 0, size = 3, color = "black") + 
+  geom_text(data = summary_psych_data, 
+            aes(x = Factor, y = -6.5,
+                label = paste0("(", Insignificant, ")")), 
+            hjust = 0, size = 3, color = "black") + 
+  annotate("text", x = 0.1, y = -2, label = "Negative \neffect", color = "black", size = 3) + 
+  annotate("text", x = 0.1, y = 2, label = "Positive \neffect", color = "black", size = 3) +
   theme(legend.position = c(0.8, 0.2),
         legend.box.background = element_rect(fill = "white")) +
   geom_vline(xintercept = 5.5, color = "black", size = 0.3, linetype = "solid") +
   annotate("text", x = 4, y = 16, label = "Cognitive", size = 3, color = "black") +
   geom_vline(xintercept = 7.5, color = "black", size = 0.3, linetype = "solid") +
   annotate("text", x = 6, y = 16, label = "Social", size = 3, color = "black") +
-  geom_vline(xintercept = 10.5, color = "black", size = 0.3, linetype = "solid") +
   annotate("text", x = 9, y = 16, label = "Dispositional", size = 3, color = "black") +
-  theme(axis.text.y = element_text(size = 10))
+  annotate("text", x = 10.8, y = -8.4, label = "Total", hjust = 0, size = 3, color = "black") +
+  annotate("text", x = 10.8, y = -7.2, label = "(Insignificant)", hjust = 0, size = 3, color = "black") +
+  theme(axis.text.y = element_text(size = 10),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_blank())
   
   
 psych_factor_absolute
