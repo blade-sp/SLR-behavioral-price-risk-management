@@ -1,17 +1,15 @@
-# Behavioral Preferences and Price Risk Management: A Systematic Literature Review
+# Farmers Adoption of price risk management tools
 
-This repository contains the materials our systematic literature review study to to identify behavioral factors 
-that influence the adoption of financial tools for price risk management in agriculture.  
+This repository contains the materials of Deliverable 5.2 "Farmers Adoption of price risk management tools" of the [AgEnRes](https://agenres.eu/) project.
 
 ## Project Structure
 
-1_data/
-    ├── IncludedStudies_FinalList.ris  # RIS file of studies inluded in the review 
-    └── Data_SLR_BehavPriceRisk.xlsx   # Main data file 
-2_scripts/ 
-    └── Script_SLR_BehavPriceRisk.R    # R script for data analysis 
-3_results/                             # Output folder: figures, tables
-README.md                              # This file
+**1_data/**
+    - `IncludedStudies_FinalList.ris`: RIS file of studies inluded in the review 
+    - `Data_SLR_BehavPriceRisk.xlsx`: Main data file 
+**2_scripts/** 
+    - `Script_SLR_BehavPriceRisk.R`: R script for data analysis 
+**3_results/**: Output folder containing figures and tables
 
 ## How to Run 
 
