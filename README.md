@@ -20,4 +20,4 @@ README.md                              # This file
 
 2. Download this repository to a folder and set the working directory if needed.
 
-3. Run script: "2_scripts/Script_SLR_BehavPriceRisk.R"
+3. Run script: "2_scripts/MainScript.R"
